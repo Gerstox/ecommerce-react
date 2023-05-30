@@ -1,0 +1,9 @@
+
+/**
+ * This function calculates total price of a new order.
+ * @param {Array} products cartProduct: Array of Objects
+ * @returns {Number} Total price
+ */
+export const totalPrice = (products) => {
+    return products.reduce((accumulator, current ) => parseInt(accumulator) + parseInt(current.price), 0);
+};

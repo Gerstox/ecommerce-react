@@ -1,0 +1,35 @@
+.checkout-side-menu {
+    top: 68px;
+    width: 360px;
+    height: calc(100vh - 70px);
+}
+
+/* .scrollable-cards {
+	overflow: scroll;
+}
+*/
+
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+/*
+.scrollable-cards {
+scrollbar-width: auto;
+scrollbar-color: #141414 #ffffff;
+}
+*/
+
+/* Chrome, Edge, and Safari */
+/*
+.scrollable-cards::-webkit-scrollbar {
+width: 8px;
+}
+
+.scrollable-cards::-webkit-scrollbar-track {
+background: #ffffff;
+}
+
+.scrollable-cards::-webkit-scrollbar-thumb {
+background-color: #a3a3a3;
+border-radius: 10px;
+border: 3px solid #a3a3a3;
+} */

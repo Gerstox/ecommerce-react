@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { ShoppingCartContext } from '../../Context';
 import { PlusIcon } from '@heroicons/react/24/solid';
+import { CheckIcon } from '@heroicons/react/24/solid';
 
 const Card = ({ data }) => {
 
@@ -9,12 +10,37 @@ const Card = ({ data }) => {
   const showProduct = (product) => {
     context.setProductToShow(product);
     context.openProductDetail();
+    context.closeCheckoutSideMenu();
   }
 
-  const onClick = (event) => {
+  const addProductsToCart = (event, productData) => {
     event.stopPropagation();
     context.setCount(context.count + 1);
+    context.setCartProducts([...context.cartProducts, productData]);
+    context.openCheckoutSideMenu();
+    context.closeProductDetail();
+    console.log('CART: ', context.cartProducts);
   }
+
+  const renderIcon = (id) => {
+    const isInCart = context.cartProducts.filter((product) => product.id === id).length > 0;
+
+    if (isInCart) {
+      return (
+        <button className='absolute top-0 right-0 flex justify-center items-center bg-black w-6 h-6 rounded-full m-2 p-1'>
+          <CheckIcon className="h-6 w-6 text-white font-bold" />
+        </button>
+      );
+    }
+
+    return (
+      <button
+        className='absolute top-0 right-0 flex justify-center items-center bg-white w-6 h-6 rounded-full m-2 p-1'
+        onClick={(event) => addProductsToCart(event, data)}>
+        <PlusIcon className="h-6 w-6 text-black-500 font-bold" />
+      </button>
+    );
+  };
 
   return (
     <div
@@ -28,11 +54,7 @@ const Card = ({ data }) => {
           className='w-full h-full object-cover rounded-lg'
           src={data.images[0]}
           alt={data.title}/>
-        <button
-          className='absolute top-0 right-0 flex justify-center items-center bg-white w-6 h-6 rounded-full m-2 p-1'
-          onClick={onClick}>
-          <PlusIcon className="h-6 w-6 text-black-500 font-bold" />
-        </button>
+        { renderIcon(data.id) }
       </figure>
       <p className='flex justify-between items-center'>
         <span className='text-sm font-light capitalize'>{data.title}</span>
