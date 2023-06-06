@@ -17,23 +17,25 @@ const Navbar = () => {
         {
           menu1.map(link => (
             link.isCategory ?
-            <NavLink
+            <li
               className={link.className}
-              to={link.to}
-              key={link.text}
-              onClick={() => context.setSearchByCategory(link.text.toLowerCase())}
-            >
-              {link.text}
-            </NavLink>
+              onClick={() => context.setSearchByCategory(link.text?.toLowerCase())}>
+              <NavLink
+                to={ link.to }
+                className={({ isActive }) => isActive ? link.style : undefined }>
+                { link.text }
+              </NavLink>
+            </li>
             :
-            <NavLink
+            <li
               className={link.className}
-              to={link.to}
-              key={link.text}
-              onClick={() => context.setSearchByCategory(null)}
-            >
-              {link.text}
-            </NavLink>
+              onClick={() => context.setSearchByCategory(null)}>
+              <NavLink
+                to={ link.to }
+                className={({ isActive }) => isActive ? link.style : undefined }>
+                { link.text }
+              </NavLink>
+            </li>
           ))
         }
       </ul>
