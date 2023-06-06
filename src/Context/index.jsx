@@ -1,4 +1,6 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
+
+import { apiUrl } from '../Api';
 
 export const ShoppingCartContext = createContext();
 
@@ -26,6 +28,63 @@ export const ShoppingCartProvider = ({children}) => {
   // Shopping Cart - Order
   const [order, setOrder] = useState([]);
 
+  // Get products
+  const [products, setProducts] = useState(null);
+  const [filteredProducts, setFilteredProducts] = useState(null);
+
+  // Get products by title
+  const [searchByTitle, setSearchByTitle] = useState(null);
+
+  // Get products by category
+  const [searchByCategory, setSearchByCategory] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/products`);
+        const data = await response.json();
+        setProducts(data);
+      } catch(error) {
+        console.error(`Ooops! ocurrio un error: ${error}`);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const filteredItemsByTitle = (products, searchByTitle) => {
+    return products?.filter((product) => product.title.toLowerCase().includes(searchByTitle.toLowerCase()));
+  };
+
+  const filteredItemsByCategory = (products, searchByCategory) => {
+    return products?.filter((product) => product.category?.name.toLowerCase().includes(searchByCategory.toLowerCase()));
+  };
+
+  const filterBy = (searchType, products, searchByTitle, searchByCategory) => {
+    if (searchType === 'BY_TITLE') {
+      return filteredItemsByTitle(products, searchByTitle);
+    }
+
+    if (searchType === 'BY_CATEGORY') {
+      return filteredItemsByCategory(products, searchByCategory);
+    }
+
+    if (searchType === 'BY_TITLE_AND_CATEGORY') {
+      return filteredItemsByCategory(products, searchByCategory).filter((product) => product.title.toLowerCase().includes(searchByTitle.toLowerCase()));
+    }
+
+    return products;
+  };
+
+  useEffect(() => {
+    if (searchByTitle && searchByCategory) setFilteredProducts(filterBy('BY_TITLE_AND_CATEGORY', products, searchByTitle, searchByCategory));
+    if (searchByTitle && !searchByCategory) setFilteredProducts(filterBy('BY_TITLE', products, searchByTitle, searchByCategory));
+    if (!searchByTitle && searchByCategory) setFilteredProducts(filterBy('BY_CATEGORY',products, searchByTitle, searchByCategory));
+    if (!searchByTitle && !searchByCategory) setFilteredProducts(filterBy(null, products, searchByTitle, searchByCategory));
+
+    return () => {
+      setSearchByTitle(null);
+    };
+  }, [products, searchByTitle, searchByCategory]);
 
   return (
     <ShoppingCartContext.Provider
@@ -43,7 +102,14 @@ export const ShoppingCartProvider = ({children}) => {
         openCheckoutSideMenu,
         closeCheckoutSideMenu,
         order,
-        setOrder
+        setOrder,
+        products,
+        setProducts,
+        searchByTitle,
+        setSearchByTitle,
+        filteredProducts,
+        searchByCategory,
+        setSearchByCategory,
       }}>
       {children}
     </ShoppingCartContext.Provider>
